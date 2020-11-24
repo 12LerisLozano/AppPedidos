@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>App Pedidos</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font: 13px Helvetica, Arial; }
+        form { background: #fff; padding: 3px; position: fixed; bottom: 0; width: 100%; border-color: #000; border-top-style: solid; border-top-width: 1px;}
+        form input { border-style: solid; border-width: 1px; padding: 10px; width: 85%; margin-right: .5%; }
+        form button { width: 9%; background: rgb(130, 224, 255); border: none; padding: 10px; margin-left: 2%; }
+        #messages { list-style-type: none; margin: 0; padding: 0; }
+        #messages li { padding: 5px 10px; }
+        #messages li:nth-child(odd) { background: #eee; }
+    </style>
+    <script src="../../socket.io/socket.io.js"></script>
+    <script src="http://code.jquery.com/jquery-1.10.1.min.js"></script>
+  </head>
+  <body>
+    <p>
+    <center>
+    <h3>DATOS DE TIENDAS</h3>
+    <table border="3">
+      <tr>
+        <th>Nombre</th>
+        <th>Dirección</th>
+        <th>Teléfono</th>
+      </tr>
+      <tr>
+        <td>Tienda las dos V</td>
+        <td>Calle 94 #98-12</td>
+        <td>3105254052</td>
+      </tr>
+      <tr>
+        <td>Donde ana</td>
+        <td>Calle 1A # 134-5</td>
+        <td>3236548732</td>
+      </tr>
+      <tr>
+        <td>Don Fernando</td>
+        <td>Calle 94 #98-24</td>
+        <td>3167231542</td>
+      </tr>
+      <tr>
+        <td>El cacha</td>
+        <td>Calle 3B #10-65</td>
+        <td>3145110265</td>
+      </tr>
+      <tr>
+        <td>Frutas y demás</td>
+        <td>Calle 93 #15-52</td>
+        <td>3206167234</td>
+      </tr>
+      <tr>
+        <td>La 15</td>
+        <td>Calle 12 #67-22</td>
+        <td>3146781342</td>
+      </tr>
+      <tr>
+        <td>Andrés </td>
+        <td> Calle 7 #11-7</td>
+        <td> 3235186754</td>
+  </tr>
+      <tr>
+        <td>Tienda Felipe </td>
+        <td> Calle 10 #54-10</td>
+        <td> 3145110267</td>
+      </tr>
+      <tr>
+        <td>Don Fernando</td>
+        <td>Calle 94 #98-24</td>
+        <td>3167231542</td>
+      </tr>
+      <tr>
+        <td> Nyn</td>
+        <td> Calle 13 #98-1</td>
+        <td> 3206574522</td>
+      </tr>
+      <tr>
+        <td> Fernanda</td>
+        <td> Calle 11 #65-7</td>
+        <td>3167824567</td>
+      </tr>
+      <tr>
+        <td>Tienda Sandra </td>
+        <td>Calle 1 #65-8</td>
+        <td>3235671563</td>
+      </tr>
+      <tr>
+        <td>JyJ</td>
+        <td>Calle 3c #44-7</td>
+        <td>311587562</td>
+      </tr>
+      <tr>
+        <td>Tienda Marta </td>
+        <td>Calle  93 #15-80</td>
+        <td>3006752317</td>
+      </tr>
+      <tr>
+        <td>El torreón</td>
+        <td>Calle  92 #12-43</td>
+        <td>3015715428</td>
+      </tr>
+      <tr>
+        <td> Donde Orlando </td>
+        <td>Calle 8 #15-76</td>
+        <td>3026735491</td>
+      </tr>
+  </table>
+</p>
+</center>
+    <center><h3>CHAT INTERACTIVO</h3></center>
+
+    <ul id="messages"></ul>
+    <form action="/" method="POST" id="chatForm">
+      <input id="txt" autocomplete="off" autofocus="on" oninput="isTyping()" placeholder="Escribe tu mensaje aquí..." /><button>Enviar</button>
+    </form>
+
+    <script>
+            var socket = io.connect('http://localhost:8080');
+            // enviar mensaje de texto sin recargar/reiniciar la página
+            $('form').submit(function(e){
+                e.preventDefault(); // evitar recarga página
+                socket.emit('chat_message', $('#txt').val());
+                $('#txt').val('');
+                return false;
+            }); 
+
+            // Añadir mensaje texto al chat
+            socket.on('chat_message', function(msg){
+                $('#messages').append($('<li>').html(msg));
+            });
+
+            // Añadir texto si alguien está online
+            socket.on('is_online', function(username) {
+                $('#messages').append($('<li>').html(username));
+            });
+
+             // Añadir texto dirección
+             socket.on('direction', function(direction) {
+                $('#direction').append($('<li>').html(direction));
+            });
+
+            // Preguntar el nombre de usuario
+            var username = prompt('Dime tu nombre, por favor');
+            socket.emit('username', username);
+
+            // Preguntar por la dirección
+            var direction = prompt('Dime tu nombre dirección, por favor');
+            socket.emit('direction', direction);
+            
+    </script>
+    </p>
+  </body>
+</html>
